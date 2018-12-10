@@ -12,7 +12,7 @@ const roleTemplate = new Schema({
         type: String,
         required: false
     },
-    permises : {
+    permissions : {
         type : Array,
         required : false,
         default : [],
