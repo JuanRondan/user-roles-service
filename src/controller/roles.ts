@@ -39,7 +39,8 @@ const role = {
             console.log(req.body);
             var role = {
                 "name": req.body.name,
-                "description": req.body.description
+                "description": req.body.description,
+                "permises": req.body.permises,
             }
             roleModel.create(role).then((doc: Document) => {
                 res.status(200);
