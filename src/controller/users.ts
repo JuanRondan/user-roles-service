@@ -43,11 +43,13 @@ const users = {
             var user = {
                 "firstName": req.body.firstName,
                 "lastName": req.body.lastName,
+                "guid": req.body.guid,
                 "address": req.body.address,
                 "phone": req.body.phone,
                 "email": req.body.email,
                 "roles": req.body.roles,
                 "birthDate": req.body.birthDate,
+                "status": req.body.status,
             };
             userModel.create(user).then((doc: Document) => {
                 res.status(200);
