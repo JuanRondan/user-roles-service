@@ -2,6 +2,10 @@ import { connect, connection } from 'mongoose';
 //const mongoose = require( 'mongoose' );
 
 var dbURI = "mongodb://localhost/trainingApp";
+if (process.env.NODE_ENV === 'production') {
+    console.log("production environment detected");
+    dbURI = "mongodb://server/uma";
+}
 
 connect(dbURI);
 
