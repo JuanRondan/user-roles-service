@@ -1,8 +1,30 @@
 import { users } from '../controller/users'
 import { role } from '../controller/roles'
+import * as express from 'express';
+import * as cors from 'cors';
+import * as idamOpenIdAuth from '@pa-util/idam-openidauth';
 
-const express = require('express');
 const router = express.Router();
+const app: express.Express = express();
+const idam = idamOpenIdAuth.Idam;
+
+idam.Configure({
+    discoveryUrl: 'https://fedsvc-stage.pwc.com/ofisids/api/discovery',
+    cacheRetriever: (async (key) => {
+        console.log("Retriever: ", key);
+        return null;
+    }),
+    cacheCallback: (key, data) => {
+        console.log("Callback: ", key, data);
+        return;
+    }
+});
+
+app.use(cors());
+
+app.use( idam.OpenIdMiddleware() , (req, res, next) => {
+    next();
+});
 
 // -----------USERS ROUTES-----------//
 
