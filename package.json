@@ -2,7 +2,7 @@
   "name": "user-roles-service",
   "version": "1.0.0",
   "description": "",
-  "main": "",
+  "main": "src/server.ts",
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers ts:ts-node/register ./spec/*.spec.ts",
     "start": "ts-node ./src/server.ts"
