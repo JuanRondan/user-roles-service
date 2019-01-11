@@ -1,7 +1,7 @@
 import { userModel } from '../models/userSchema';
 import { Document } from 'mongoose';
 
-const users = {
+const users = {    
     //GET ALL USERS
     getUsers: (req, res) => {
         userModel.find().exec((err, user) => {
