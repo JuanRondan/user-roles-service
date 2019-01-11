@@ -1,8 +1,9 @@
 import { users } from '../controller/users'
 import { role } from '../controller/roles'
+import * as express from 'express';
 
-const express = require('express');
 const router = express.Router();
+const app: express.Express = express();
 
 // -----------USERS ROUTES-----------//
 
