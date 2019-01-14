@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@pa-util/idam-openidauth": "^0.3.2",
     "@types/express": "^4.16.0",
     "@types/mongoose": "^5.3.2",
     "cors": "^2.8.5",
