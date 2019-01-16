@@ -20,9 +20,9 @@ idam.Configure({
 
 app.use(cors());
 
-app.use( idam.OpenIdMiddleware() , (req, res, next) => {
+/* app.use( idam.OpenIdMiddleware() , (req, res, next) => {
     next();
-});
+}); */
 
 app.use(express.urlencoded({
     extended: true
