@@ -1,43 +1,30 @@
-import { users } from '../controller/users'
-import { role } from '../controller/roles'
 import * as express from 'express';
+import { users } from '../controller/users';
+import { role } from '../controller/roles';
+import { camunda } from '../controller/camunda';
 
 const router = express.Router();
-const app: express.Express = express();
+//const app: express.Express = express();
 
 // -----------USERS ROUTES-----------//
-
-//GET ALL USER
 router.get('/users', users.getUsers);
-
-//GET ONE USER
 router.get('/users/:userId', users.getUserWithID);
-
-//POST NEW USER
 router.post('/users', users.postUser);
-
-//UPDATE USER
 router.put('/users/:userId', users.putUser);
-
-//DELETE USER
 router.delete('/users/:userId', users.deleteUser);
 
 // -----------ROLE ROUTES-----------//
-
-//GET ALL ROLES
 router.get('/roles', role.getRoles);
-
-//GET ONE ROLE
 router.get('/roles/:roleId', role.getRoleWithID);
-
-//POST NEW ROLE
 router.post('/roles', role.postRole);
-
-//UPDATE ROLE
 router.put('/roles/:roleId', role.putRole);
-
-//DELETE ROLE
 router.delete('/roles/:roleId', role.deleteRole);
+
+//----------CAMUNDA ROUTES-----------//
+router.get('/camunda/:userId', camunda.getRequests);
+router.post('/camunda', camunda.initiateRequest);
+router.post('/camunda/:taskId/approve', camunda.approveRequest);
+router.post('/camunda/:taskId/reject', camunda.rejectRequest);
 
 //test alive
 router.get('/ping', (req, res)=>{

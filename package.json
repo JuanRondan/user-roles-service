@@ -17,6 +17,7 @@
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "mongoose": "^5.3.14",
+    "request": "^2.88.0",
     "ts-node": "^7.0.1",
     "typescript": "^3.2.1"
   },
