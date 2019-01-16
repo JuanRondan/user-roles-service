@@ -21,8 +21,8 @@ router.put('/roles/:roleId', role.putRole);
 router.delete('/roles/:roleId', role.deleteRole);
 
 //----------CAMUNDA ROUTES-----------//
-router.get('/camunda/:userId', camunda.getRequests);
-router.post('/camunda', camunda.initiateRequest);
+router.get('/camunda/:userId/roles/:roleId', camunda.getRequests);
+router.post('/camunda/:userId', camunda.initiateRequest);
 router.post('/camunda/:taskId/approve', camunda.approveRequest);
 router.post('/camunda/:taskId/reject', camunda.rejectRequest);
 
