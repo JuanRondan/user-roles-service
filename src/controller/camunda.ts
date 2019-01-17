@@ -4,7 +4,7 @@ const camundaIp: string = "http://40.121.159.38:8080/engine-rest";
 const camunda = {
 
     getRequests: (req, res) => {
-        request.get(`${camundaIp}/task`, (error, response, body) => {
+        request.get(`${camundaIp}/task?processDefinitionId=RequestApproval:1:97c9f097-199b-11e9-9519-000d3a1bf7dd`, (error, response, body) => {
             if (error) {
                 console.dir(error);
                 res.status(500);
@@ -12,27 +12,48 @@ const camunda = {
                 return;
             }
             res.status(200);
-            res.json(body);
+            res.json(JSON.parse(body));
         });
     },
 
     initiateRequest: (req, res) => {
-        request.post(`${camundaIp}/process-definition/key/RequestApproval/start`, {}, (error, response, body) => {
-            if (error) {
-                console.dir(error);
-                res.status(500);
-                res.json({ 'message': 'camunda server error' });
-                return;
+        if (req.params && req.params.userId) {
+
+            const payload = {
+                "variables": {
+                    "owner": {
+                        "value": req.params.userId,
+                        "type": "String"
+                    },
+                    "creationDate": {
+                        "value": req.body.creationDate,
+                        "type": "String"
+                    },
+                    "description": {
+                        "value": req.body.description,
+                        "type": "String"
+                    }
+                }
             }
-            res.status(201);
-            res.json(body);
-        });
+            request.post(`${camundaIp}/process-definition/key/RequestApproval/start`, payload, (error, response, body) => {
+                if (error) {
+                    console.dir(error);
+                    res.status(500);
+                    res.json({ 'message': 'camunda server error' });
+                    return;
+                }
+                res.status(201);
+                res.json(JSON.parse(body));
+            });
+        } else {
+            res.status(400);
+            res.json({ 'message': 'bad request - missing paramter userId' });
+        }
     },
 
     approveRequest: (req, res) => {
         if (req.params && req.params.taskId) {
-
-            let payload = {
+            const payload = {
                 "variables": {
                     "option": {
                         "value": "yes"
@@ -58,8 +79,7 @@ const camunda = {
 
     rejectRequest: (req, res) => {
         if (req.params && req.params.taskId) {
-
-            let payload = {
+            const payload = {
                 "variables": {
                     "option": {
                         "value": "no"
