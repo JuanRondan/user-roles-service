@@ -5,9 +5,8 @@ const camunda = {
 
     getRequests: (req, res) => {
         let userId = req.params.userId;
-        request.get(`${camundaIp}/task?processDefinitionId=RequestApproval:1:97c9f097-199b-11e9-9519-000d3a1bf7dd`, (error, response, body) => {
+        request.get(`${camundaIp}/task?processDefinitionId=RequestApproval:1:5f955e8c-1a93-11e9-b1de-000d3a1bf7dd`, (error, response, body) => {
             if (error) {
-                console.dir(error);
                 res.status(500);
                 res.json({ 'message': 'camunda server error' });
                 return;
@@ -21,7 +20,9 @@ const camunda = {
                         body[index].processInstance = JSON.parse(processInstanceData);
                         n--;
                         if (n <= 0) {
-                            res.json(body.filter(v=>v.processInstance.owner.value === userId));
+                            res.json(body.filter(v=>{
+                                return v.processInstance.owner.value === userId;
+                            }));
                         }
                     });
                 });

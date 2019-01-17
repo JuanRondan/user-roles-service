@@ -28,6 +28,7 @@ const role = {
             roleModel.findById(req.params.roleId).exec((err, role) => {
                 if (err) {
                     res.send(err.message);
+                    return;
                 }
                 res.json(role);
             });
