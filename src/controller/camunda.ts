@@ -4,7 +4,7 @@ const camundaIp: string = "http://40.121.159.38:8080/engine-rest";
 const camunda = {
 
     getRequests: (req, res) => {
-        let userId = req.params;
+        let userId = req.params.userId;
         request.get(`${camundaIp}/task?processDefinitionId=RequestApproval:1:97c9f097-199b-11e9-9519-000d3a1bf7dd`, (error, response, body) => {
             if (error) {
                 console.dir(error);
