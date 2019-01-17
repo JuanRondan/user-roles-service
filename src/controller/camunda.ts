@@ -31,38 +31,44 @@ const camunda = {
     },
 
     initiateRequest: (req, res) => {
-        if (req.params && req.params.userId) {
-
-            const payload = {
-                "variables": {
-                    "owner": {
-                        "value": req.params.userId,
-                        "type": "String"
-                    },
-                    "creationDate": {
-                        "value": req.body.creationDate,
-                        "type": "String"
-                    },
-                    "description": {
-                        "value": req.body.description,
-                        "type": "String"
-                    }
+        const payload = {
+            "variables": {
+                /* "name": {
+                    "value": req.body.name,
+                    "type": "String"
+                }, */
+                "owner": {
+                    "value": req.body.owner,
+                    "type": "String"
+                },
+                "creationDate": {
+                    "value": req.body.creationDate,
+                    "type": "String"
+                },
+                "description": {
+                    "value": req.body.description,
+                    "type": "String"
                 }
             }
-            request.post(`${camundaIp}/process-definition/key/RequestApproval/start`, payload, (error, response, body) => {
-                if (error) {
-                    console.dir(error);
-                    res.status(500);
-                    res.json({ 'message': 'camunda server error' });
-                    return;
-                }
-                res.status(201);
-                res.json(JSON.parse(body));
-            });
-        } else {
-            res.status(400);
-            res.json({ 'message': 'bad request - missing paramter userId' });
         }
+        
+        request({
+            url: `${camundaIp}/process-definition/key/RequestApproval/submit-form`,
+            method: "POST",
+            json: payload
+        }, (error, response, body) => {
+            if (error) {
+                console.dir(error);
+                res.status(500);
+                res.json({ 'message': 'camunda server error' });
+                return;
+            }
+            console.log("payload: ", payload);
+            console.log("response: ", error);
+            console.log("body ", body);
+            res.status(201);
+            res.json(response);
+        });
     },
 
     approveRequest: (req, res) => {
@@ -75,7 +81,7 @@ const camunda = {
                 }
             }
 
-            request.put(`${camundaIp}/task/${req.params.taskId}/complete`, payload, (error, response, body) => {
+            request.put(`${camundaIp}/task/${req.params.taskId}/complete`, (error, response, body) => {
                 if (error) {
                     console.dir(error);
                     res.status(500);
@@ -101,7 +107,7 @@ const camunda = {
                 }
             }
 
-            request.put(`${camundaIp}/task/${req.params.taskId}/complete`, payload, (error, response, body) => {
+            request.put(`${camundaIp}/task/${req.params.taskId}/complete`, (error, response, body) => {
                 if (error) {
                     console.dir(error);
                     res.status(500);
