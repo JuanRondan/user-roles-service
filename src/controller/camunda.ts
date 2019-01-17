@@ -12,7 +12,21 @@ const camunda = {
                 return;
             }
             res.status(200);
-            res.json(JSON.parse(body));
+            body = JSON.parse(body);
+            var n = body.length;
+            if (n) {
+                body.forEach((task, index) => {
+                    request.get(`${camundaIp}/process-instance/${task.processInstanceId}/variables`, (e, response, processInstanceData) => {
+                        body[index].processInstance = JSON.parse(processInstanceData);
+                        n--;
+                        if (n <= 0) {
+                            res.json(body);
+                        }
+                    });
+                });
+            } else {
+                res.json(body);
+            }
         });
     },
 
