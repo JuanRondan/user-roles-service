@@ -36,7 +36,6 @@ const camunda = {
                 body.forEach((task, index) => {
                     request.get(`${camundaIp}/history/variable-instance?processInstanceId=${task.processInstanceId}`, (e, response, processInstanceData) => {
                         processInstanceData = JSON.parse(processInstanceData);
-                        //console.log("processInstanceData", processInstanceData);
                         body[index].processInstance = {};
                         processInstanceData.forEach(variable => {
                             body[index].processInstance[variable.name] = {
@@ -47,23 +46,14 @@ const camunda = {
                         n--;
                         if (n <= 0) {
                             let ret = body.filter(v=>{
-                                //console.log('>>>>>>>');
-                                //console.log(v);
                                 return v.processInstance.owner.value === userId || role.indexOf("admin") !== -1 || appendParams.length;
                             });
                             let finalResult = [];
                             let covered = {};
                             ret.forEach((currentTask, indexSelectedTask) => {
-                                //console.log(covered);
                                 if (!covered[indexSelectedTask]) {
                                     let filteredTasks = ret.filter(r => r.processInstanceId === currentTask.processInstanceId);
                                     let selected = null;
-                                    /*
-                                    console.log(filteredTasks.map(f => {return {
-                                        name : f.name,
-                                        processInstanceId : f.processInstanceId,
-                                    }}));
-                                    */
                                     filteredTasks.forEach(filteredSelectedTask => {
                                         if (selected) {
                                             let idx = STAGES_PRIORITY.indexOf(filteredSelectedTask.name);
@@ -77,6 +67,13 @@ const camunda = {
                                             selected = filteredSelectedTask;
                                         }
                                     });
+                                    if (selected.deleteReason === 'completed') {
+                                        if (selected.processInstance.option.value === 'yes') {
+                                            selected.name += ' (ACCEPTED)';
+                                        } else {
+                                            selected.name += ' (REJECTED)';
+                                        }
+                                    }
                                     finalResult.push(selected);
                                 }
                             });
