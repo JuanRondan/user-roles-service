@@ -8,13 +8,20 @@ const camunda = {
         let appendParams = '';
         let role = req.params.roleId.toLowerCase();
 
+        const STAGE_FIRST_APPROVAL = 'Pending First Approval';
+        const STAGE_SECOND_APPROVAL = 'Pending Second Approval';
+        const STAGES_PRIORITY = [
+            STAGE_SECOND_APPROVAL,
+            STAGE_FIRST_APPROVAL,
+        ];
+
         if (role.indexOf("first") !== -1 || role.indexOf("1") !== -1) {
-            appendParams = '&name=Pending First Approval';
+            appendParams = '&name=' + STAGE_FIRST_APPROVAL;
         } else if (role.indexOf("second") !== -1 || role.indexOf("2") !== -1) {
-            appendParams = '&name=Pending Second Approval';
+            appendParams = '&name=' + STAGE_SECOND_APPROVAL;
         }
 
-        let url = `${camundaIp}/task?processDefinitionId=RequestApproval:1:5f955e8c-1a93-11e9-b1de-000d3a1bf7dd${appendParams}`;
+        let url = `${camundaIp}/history/task?processDefinitionId=RequestApproval:1:5f955e8c-1a93-11e9-b1de-000d3a1bf7dd${appendParams}`;
 
         request.get(url, (error, response, body) => {
             if (error) {
@@ -27,13 +34,53 @@ const camunda = {
             var n = body.length;
             if (n) {
                 body.forEach((task, index) => {
-                    request.get(`${camundaIp}/process-instance/${task.processInstanceId}/variables`, (e, response, processInstanceData) => {
-                        body[index].processInstance = JSON.parse(processInstanceData);
+                    request.get(`${camundaIp}/history/variable-instance?processInstanceId=${task.processInstanceId}`, (e, response, processInstanceData) => {
+                        processInstanceData = JSON.parse(processInstanceData);
+                        //console.log("processInstanceData", processInstanceData);
+                        body[index].processInstance = {};
+                        processInstanceData.forEach(variable => {
+                            body[index].processInstance[variable.name] = {
+                                value : variable.value,
+                                type : variable.type,
+                            };
+                        });
                         n--;
                         if (n <= 0) {
-                            res.json(body.filter(v=>{
+                            let ret = body.filter(v=>{
+                                //console.log('>>>>>>>');
+                                //console.log(v);
                                 return v.processInstance.owner.value === userId || role.indexOf("admin") !== -1 || appendParams.length;
-                            }));
+                            });
+                            let finalResult = [];
+                            let covered = {};
+                            ret.forEach((currentTask, indexSelectedTask) => {
+                                //console.log(covered);
+                                if (!covered[indexSelectedTask]) {
+                                    let filteredTasks = ret.filter(r => r.processInstanceId === currentTask.processInstanceId);
+                                    let selected = null;
+                                    /*
+                                    console.log(filteredTasks.map(f => {return {
+                                        name : f.name,
+                                        processInstanceId : f.processInstanceId,
+                                    }}));
+                                    */
+                                    filteredTasks.forEach(filteredSelectedTask => {
+                                        if (selected) {
+                                            let idx = STAGES_PRIORITY.indexOf(filteredSelectedTask.name);
+                                            let j = -1;
+                                            while (ret[++j].id !== filteredSelectedTask.id);
+                                            covered[j] = true;
+                                            if (STAGES_PRIORITY.indexOf(selected.name) > idx) {
+                                                selected = filteredSelectedTask;
+                                            }
+                                        } else {
+                                            selected = filteredSelectedTask;
+                                        }
+                                    });
+                                    finalResult.push(selected);
+                                }
+                            });
+                            res.json(finalResult);
                         }
                     });
                 });
