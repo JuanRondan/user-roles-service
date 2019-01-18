@@ -5,7 +5,18 @@ const camunda = {
 
     getRequests: (req, res) => {
         let userId = req.params.userId;
-        request.get(`${camundaIp}/task?processDefinitionId=RequestApproval:1:5f955e8c-1a93-11e9-b1de-000d3a1bf7dd`, (error, response, body) => {
+        let appendParams = '';
+        let role = req.params.roleId.toLowerCase();
+
+        if (role.indexOf("first") !== -1 || role.indexOf("1") !== -1) {
+            appendParams = '&name=Pending First Approval';
+        } else if (role.indexOf("second") !== -1 || role.indexOf("2") !== -1) {
+            appendParams = '&name=Pending Second Approval';
+        }
+
+        let url = `${camundaIp}/task?processDefinitionId=RequestApproval:1:5f955e8c-1a93-11e9-b1de-000d3a1bf7dd${appendParams}`;
+
+        request.get(url, (error, response, body) => {
             if (error) {
                 res.status(500);
                 res.json({ 'message': 'camunda server error' });
@@ -21,7 +32,7 @@ const camunda = {
                         n--;
                         if (n <= 0) {
                             res.json(body.filter(v=>{
-                                return v.processInstance.owner.value === userId;
+                                return v.processInstance.owner.value === userId || role.indexOf("admin") !== -1 || appendParams.length;
                             }));
                         }
                     });
