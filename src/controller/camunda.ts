@@ -76,9 +76,6 @@ const camunda = {
                 res.json({ 'message': 'camunda server error' });
                 return;
             }
-            console.log("payload: ", payload);
-            console.log("response: ", error);
-            console.log("body ", body);
             res.status(201);
             res.json(response);
         });
@@ -93,8 +90,11 @@ const camunda = {
                     }
                 }
             }
-
-            request.put(`${camundaIp}/task/${req.params.taskId}/complete`, (error, response, body) => {
+            request({
+                url: `${camundaIp}/task/${req.params.taskId}/complete`,
+                method: "POST",
+                json: payload
+            }, (error, response, body) => {
                 if (error) {
                     console.dir(error);
                     res.status(500);
@@ -119,8 +119,11 @@ const camunda = {
                     }
                 }
             }
-
-            request.put(`${camundaIp}/task/${req.params.taskId}/complete`, (error, response, body) => {
+            request({
+                url: `${camundaIp}/task/${req.params.taskId}/complete`,
+                method: "POST",
+                json: payload
+            }, (error, response, body) => {
                 if (error) {
                     console.dir(error);
                     res.status(500);
