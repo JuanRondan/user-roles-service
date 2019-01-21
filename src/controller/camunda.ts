@@ -8,6 +8,7 @@ const camunda = {
         let appendParams = '';
         let role = req.params.roleId.toLowerCase();
 
+        const DEPLOYMENT_ID = 'RequestApproval:1:5f955e8c-1a93-11e9-b1de-000d3a1bf7dd';
         const STAGE_FIRST_APPROVAL = 'Pending First Approval';
         const STAGE_SECOND_APPROVAL = 'Pending Second Approval';
         const STAGES_PRIORITY = [
@@ -21,7 +22,7 @@ const camunda = {
             appendParams = '&name=' + STAGE_SECOND_APPROVAL;
         }
 
-        let url = `${camundaIp}/history/task?processDefinitionId=RequestApproval:1:5f955e8c-1a93-11e9-b1de-000d3a1bf7dd${appendParams}`;
+        let url = `${camundaIp}/history/task?processDefinitionId=${DEPLOYMENT_ID}${appendParams}`;
 
         request.get(url, (error, response, body) => {
             if (error) {
@@ -46,7 +47,9 @@ const camunda = {
                         n--;
                         if (n <= 0) {
                             let ret = body.filter(v=>{
-                                return v.processInstance.owner.value === userId || role.indexOf("admin") !== -1 || appendParams.indexOf(v.name) !== -1;
+                                return (appendParams.length === 0 && v.processInstance.owner.value === userId) || 
+                                role.indexOf("admin") !== -1 || 
+                                (appendParams.indexOf(v.name) !== -1 && v.processInstance.owner.value !== userId);
                             });
                             let finalResult = [];
                             let covered = {};
