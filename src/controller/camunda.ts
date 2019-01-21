@@ -46,7 +46,7 @@ const camunda = {
                         n--;
                         if (n <= 0) {
                             let ret = body.filter(v=>{
-                                return v.processInstance.owner.value === userId || role.indexOf("admin") !== -1 || appendParams.length;
+                                return v.processInstance.owner.value === userId || role.indexOf("admin") !== -1 || appendParams.indexOf(v.name) !== -1;
                             });
                             let finalResult = [];
                             let covered = {};
