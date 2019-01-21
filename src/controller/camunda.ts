@@ -47,8 +47,8 @@ const camunda = {
                         n--;
                         if (n <= 0) {
                             let ret = body.filter(v=>{
-                                return (/*appendParams.length === 0 && */v.processInstance.owner.value === userId) || 
-                                role.indexOf("admin") !== -1 || 
+                                return (appendParams.length === 0 && v.processInstance.owner.value === userId) ||
+                                role.indexOf("admin") !== -1 ||
                                 (appendParams.indexOf(v.name) !== -1/* && v.processInstance.owner.value !== userId*/);
                             });
                             let finalResult = [];
