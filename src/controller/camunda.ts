@@ -8,7 +8,7 @@ const camunda = {
         let appendParams = '';
         let role = req.params.roleId.toLowerCase();
 
-        const DEPLOYMENT_ID = 'RequestApproval:1:5f955e8c-1a93-11e9-b1de-000d3a1bf7dd';
+        const DEPLOYMENT_ID = 'RequestApproval:1:ae1fe03a-1e42-11e9-a6c4-000d3a1bf7dd';
         const STAGE_FIRST_APPROVAL = 'Pending First Approval';
         const STAGE_SECOND_APPROVAL = 'Pending Second Approval';
         const STAGES_PRIORITY = [
@@ -17,9 +17,9 @@ const camunda = {
         ];
 
         if (role.indexOf("first") !== -1 || role.indexOf("1") !== -1) {
-            appendParams = '&name=' + STAGE_FIRST_APPROVAL;
+            appendParams = '&taskName=' + STAGE_FIRST_APPROVAL;
         } else if (role.indexOf("second") !== -1 || role.indexOf("2") !== -1) {
-            appendParams = '&name=' + STAGE_SECOND_APPROVAL;
+            appendParams = '&taskName=' + STAGE_SECOND_APPROVAL;
         }
 
         let url = `${camundaIp}/history/task?processDefinitionId=${DEPLOYMENT_ID}${appendParams}`;
@@ -49,8 +49,9 @@ const camunda = {
                             let ret = body.filter(v=>{
                                 return (appendParams.length === 0 && v.processInstance.owner.value === userId) ||
                                 role.indexOf("admin") !== -1 ||
-                                (appendParams.indexOf(v.name) !== -1/* && v.processInstance.owner.value !== userId*/);
+                                (appendParams.indexOf(v.name) !== -1);
                             });
+                            /*
                             let finalResult = [];
                             let covered = {};
                             ret.forEach((currentTask, indexSelectedTask) => {
@@ -81,6 +82,8 @@ const camunda = {
                                 }
                             });
                             res.json(finalResult);
+                            */
+                            res.json(ret);
                         }
                     });
                 });
