@@ -4,25 +4,20 @@ const camundaIp: string = "http://40.121.159.38:8080/engine-rest";
 const camunda = {
 
     getRequests: (req, res) => {
-        let userId = req.params.userId;
-        let appendParams = '';
-        let role = req.params.roleId.toLowerCase();
-
-        const DEPLOYMENT_ID = 'RequestApproval:1:ae1fe03a-1e42-11e9-a6c4-000d3a1bf7dd';
+        const DEPLOYMENT_ID = 'RequestApproval:1:5e06fb34-1f19-11e9-99f5-000d3a1bf7dd';
         const STAGE_FIRST_APPROVAL = 'Pending First Approval';
         const STAGE_SECOND_APPROVAL = 'Pending Second Approval';
-        const STAGES_PRIORITY = [
-            STAGE_SECOND_APPROVAL,
-            STAGE_FIRST_APPROVAL,
-        ];
+        let url = `${camundaIp}/history/task?processDefinitionId=${DEPLOYMENT_ID}`;
+        let userId = req.params.userId;
+        let role = req.params.roleId.toLowerCase();
 
         if (role.indexOf("first") !== -1 || role.indexOf("1") !== -1) {
-            appendParams = '&taskName=' + STAGE_FIRST_APPROVAL;
+            url += '&taskName=' + STAGE_FIRST_APPROVAL;
         } else if (role.indexOf("second") !== -1 || role.indexOf("2") !== -1) {
-            appendParams = '&taskName=' + STAGE_SECOND_APPROVAL;
+            url += '&taskName=' + STAGE_SECOND_APPROVAL;
+        } if (role.indexOf("user") !== -1) {
+            url += `&taskOwner=${userId}`;
         }
-
-        let url = `${camundaIp}/history/task?processDefinitionId=${DEPLOYMENT_ID}${appendParams}`;
 
         request.get(url, (error, response, body) => {
             if (error) {
@@ -30,9 +25,11 @@ const camunda = {
                 res.json({ 'message': 'camunda server error' });
                 return;
             }
+
             res.status(200);
             body = JSON.parse(body);
             var n = body.length;
+
             if (n) {
                 body.forEach((task, index) => {
                     request.get(`${camundaIp}/history/variable-instance?processInstanceId=${task.processInstanceId}`, (e, response, processInstanceData) => {
@@ -46,44 +43,7 @@ const camunda = {
                         });
                         n--;
                         if (n <= 0) {
-                            let ret = body.filter(v=>{
-                                return (appendParams.length === 0 && v.processInstance.owner.value === userId) ||
-                                role.indexOf("admin") !== -1 ||
-                                (appendParams.indexOf(v.name) !== -1);
-                            });
-                            /*
-                            let finalResult = [];
-                            let covered = {};
-                            ret.forEach((currentTask, indexSelectedTask) => {
-                                if (!covered[indexSelectedTask]) {
-                                    let filteredTasks = ret.filter(r => r.processInstanceId === currentTask.processInstanceId);
-                                    let selected = null;
-                                    filteredTasks.forEach(filteredSelectedTask => {
-                                        if (selected) {
-                                            let idx = STAGES_PRIORITY.indexOf(filteredSelectedTask.name);
-                                            let j = -1;
-                                            while (ret[++j].id !== filteredSelectedTask.id);
-                                            covered[j] = true;
-                                            if (STAGES_PRIORITY.indexOf(selected.name) > idx) {
-                                                selected = filteredSelectedTask;
-                                            }
-                                        } else {
-                                            selected = filteredSelectedTask;
-                                        }
-                                    });
-                                    if (selected.deleteReason === 'completed') {
-                                        if (selected.processInstance.option.value === 'yes') {
-                                            selected.name += ' (ACCEPTED)';
-                                        } else {
-                                            selected.name += ' (REJECTED)';
-                                        }
-                                    }
-                                    finalResult.push(selected);
-                                }
-                            });
-                            res.json(finalResult);
-                            */
-                            res.json(ret);
+                            res.json(body);
                         }
                     });
                 });
@@ -96,10 +56,6 @@ const camunda = {
     initiateRequest: (req, res) => {
         const payload = {
             "variables": {
-                /* "name": {
-                    "value": req.body.name,
-                    "type": "String"
-                }, */
                 "owner": {
                     "value": req.body.owner,
                     "type": "String"
@@ -116,7 +72,7 @@ const camunda = {
         }
         
         request({
-            url: `${camundaIp}/process-definition/key/RequestApproval/submit-form`,
+            url: `${camundaIp}/process-definition/key/RequestApproval/start`,
             method: "POST",
             json: payload
         }, (error, response, body) => {
