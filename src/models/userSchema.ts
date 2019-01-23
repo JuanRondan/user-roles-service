@@ -6,6 +6,7 @@ const userTemplate = new Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     address: { type: String, required: true },
+    guid: { type: String, required: true },
     phone: { type: String, required: false },
     email: { type: String, required: true},
     roles: { type: [String] },
