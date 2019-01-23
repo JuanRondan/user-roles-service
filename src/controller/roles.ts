@@ -1,7 +1,7 @@
 import { roleModel } from '../models/roleSchema';
 import { Document } from 'mongoose';
 import { userModel } from '../models/userSchema';
-
+import * as request from 'request';
 
 const role = {
 
@@ -19,6 +19,24 @@ const role = {
         });
     },
 
+    getRolesFromCamunda: (req, res) => {
+        const camundaIp: string = "http://40.121.159.38:8080/engine-rest";
+        const prefix = "%POC%";
+
+        request({
+            url: `${camundaIp}/group/?nameLike=${prefix}`,
+            method: "GET"
+        }, (error, response, body) => {
+            if (error) {
+                console.dir(error);
+                res.status(500);
+                res.json({ 'message': 'camunda server error retrieving groups' });
+                return;
+            }
+            res.status(200);
+            res.json(JSON.parse(body));
+        });
+    },
 
     //GET ONE ROLE
     getRoleWithID: (req, res) => {
@@ -92,22 +110,22 @@ const role = {
 
                 } else {
                     /*WIPE DELETED ROLE FROM EACH USER*/
-                    let wipeRole = function() {
+                    let wipeRole = function () {
                         try {
-                            userModel.find( (err, users:any) => {
+                            userModel.find((err, users: any) => {
                                 for (let i = 0; i < users.length; i++) {
-                                //const element = array[i];
+                                    //const element = array[i];
                                     let index = users[i].roles.indexOf(req.params.roleId);
-                                    if ( index > -1 ) {
+                                    if (index > -1) {
                                         users[i].roles.splice(index, 1);
-                                        userModel.findByIdAndUpdate(users[i]._id , users[i]).exec().catch( (err)=>{});
-                                    }   
+                                        userModel.findByIdAndUpdate(users[i]._id, users[i]).exec().catch((err) => { });
+                                    }
                                 }
                                 console.log(users);
-                                
+
                             });
                         }
-                        catch(err) {
+                        catch (err) {
                             console.log('Error: ', err.message);
                         }
                     }
