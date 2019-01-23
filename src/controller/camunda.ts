@@ -4,17 +4,17 @@ const camundaIp: string = "http://40.121.159.38:8080/engine-rest";
 const camunda = {
 
     getRequests: (req, res) => {
-        const DEPLOYMENT_ID = 'RequestApproval:1:5e06fb34-1f19-11e9-99f5-000d3a1bf7dd';
-        const STAGE_FIRST_APPROVAL = 'Pending First Approval';
-        const STAGE_SECOND_APPROVAL = 'Pending Second Approval';
+        const DEPLOYMENT_ID = 'RequestApproval:1:2abfbc25-1f3f-11e9-99f5-000d3a1bf7dd';
+        const FIRST_STAGE_FILTER_ID = '2d83b061-1e51-11e9-a6c4-000d3a1bf7dd';
+        const SECOND_STAGE_FILTER_ID = '68409d82-1e51-11e9-a6c4-000d3a1bf7dd';
         let url = `${camundaIp}/history/task?processDefinitionId=${DEPLOYMENT_ID}`;
         let userId = req.params.userId;
         let role = req.params.roleId.toLowerCase();
 
         if (role.indexOf("first") !== -1 || role.indexOf("1") !== -1) {
-            url += '&taskName=' + STAGE_FIRST_APPROVAL;
+            url = `${camundaIp}/filter/${FIRST_STAGE_FILTER_ID}/list`;
         } else if (role.indexOf("second") !== -1 || role.indexOf("2") !== -1) {
-            url += '&taskName=' + STAGE_SECOND_APPROVAL;
+            url = `${camundaIp}/filter/${SECOND_STAGE_FILTER_ID}/list`;
         } if (role.indexOf("user") !== -1) {
             url += `&taskOwner=${userId}`;
         }
