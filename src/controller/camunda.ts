@@ -7,15 +7,15 @@ const camunda = {
         const DEPLOYMENT_ID = 'RequestApproval:1:2abfbc25-1f3f-11e9-99f5-000d3a1bf7dd';
         const FIRST_STAGE_FILTER_ID = '2d83b061-1e51-11e9-a6c4-000d3a1bf7dd';
         const SECOND_STAGE_FILTER_ID = '68409d82-1e51-11e9-a6c4-000d3a1bf7dd';
-        let url = `${camundaIp}/history/task?processDefinitionId=${DEPLOYMENT_ID}`;
+        let url = `${camundaIp}/task?processDefinitionId=${DEPLOYMENT_ID}`;
         let userId = req.params.userId;
         let role = req.params.roleId.toLowerCase();
 
-        if (role.indexOf("first") !== -1 || role.indexOf("1") !== -1) {
+        if (role === "approver1") {
             url = `${camundaIp}/filter/${FIRST_STAGE_FILTER_ID}/list`;
-        } else if (role.indexOf("second") !== -1 || role.indexOf("2") !== -1) {
+        } else if (role === "approver2") {
             url = `${camundaIp}/filter/${SECOND_STAGE_FILTER_ID}/list`;
-        } if (role.indexOf("user") !== -1) {
+        } if (role === "user") {
             url += `&taskOwner=${userId}`;
         }
 
