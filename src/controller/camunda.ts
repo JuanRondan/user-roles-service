@@ -4,19 +4,15 @@ const camundaIp: string = "http://40.121.159.38:8080/engine-rest";
 const camunda = {
 
     getRequests: (req, res) => {
-        const DEPLOYMENT_ID = 'RequestApproval:1:2abfbc25-1f3f-11e9-99f5-000d3a1bf7dd';
-        const FIRST_STAGE_FILTER_ID = '2d83b061-1e51-11e9-a6c4-000d3a1bf7dd';
-        const SECOND_STAGE_FILTER_ID = '68409d82-1e51-11e9-a6c4-000d3a1bf7dd';
-        let url = `${camundaIp}/task?processDefinitionId=${DEPLOYMENT_ID}`;
+        const DEFINITION_KEY = 'RequestApproval';
         let userId = req.params.userId;
         let role = req.params.roleId.toLowerCase();
+        let url = `${camundaIp}/task?processDefinitionKey=${DEFINITION_KEY}`;
 
-        if (role === "approver1") {
-            url = `${camundaIp}/filter/${FIRST_STAGE_FILTER_ID}/list`;
-        } else if (role === "approver2") {
-            url = `${camundaIp}/filter/${SECOND_STAGE_FILTER_ID}/list`;
-        } if (role === "user") {
-            url += `&taskOwner=${userId}`;
+        if (role === "user") {
+            url += `&owner=${userId}`;
+        } else {
+            url += `&assigneeLike=%${role}%`;
         }
 
         request.get(url, (error, response, body) => {
