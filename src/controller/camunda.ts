@@ -11,7 +11,7 @@ const camunda = {
 
         if (role === "user") {
             url += `&owner=${userId}`;
-        } else {
+        } else if (role !== "admin") {
             url += `&assigneeLike=%${role}%`;
         }
 
