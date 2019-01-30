@@ -15,6 +15,7 @@ router.delete('/users/:userId', users.deleteUser);
 
 // -----------ROLE ROUTES-----------//
 router.get('/roles', role.getRoles);
+router.get('/roles/camunda', role.getRolesFromCamunda);
 router.get('/roles/:roleId', role.getRoleWithID);
 router.post('/roles', role.postRole);
 router.put('/roles/:roleId', role.putRole);
