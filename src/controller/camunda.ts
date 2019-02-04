@@ -139,7 +139,8 @@ const camunda = {
             res.status(400);
             res.json({ 'message': 'bad request - missing paramter taskId' });
         }
-    }
+    },
+
 }
 
 export { camunda };

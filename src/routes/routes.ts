@@ -27,6 +27,16 @@ router.post('/camunda', camunda.initiateRequest);
 router.post('/camunda/:taskId/approve', camunda.approveRequest);
 router.post('/camunda/:taskId/reject', camunda.rejectRequest);
 
+//----------CAMUNDA USER ROUTES-----------//
+router.get('/camunda/user', users.getUserListFromCamunda);
+router.post('/users/createCamundaUser', users.createCamundaUser);
+router.put('/users/updateCamundaUser', users.updateCamundaUser);
+router.delete('/users/:userId', users.deleteCamundaUser);
+
+// router.post('/camunda', camunda.initiateRequest);
+// router.post('/camunda/:taskId/approve', camunda.approveRequest);
+// router.post('/camunda/:taskId/reject', camunda.rejectRequest);
+
 //test alive
 router.get('/ping', (req, res)=>{
     res.json("pong");
