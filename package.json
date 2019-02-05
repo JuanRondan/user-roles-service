@@ -5,7 +5,7 @@
   "main": "src/server.ts",
   "scripts": {
     "test": "./node_modules/.bin/mocha --compilers ts:ts-node/register ./spec/*.spec.ts",
-    "start": "ts-node ./src/server.ts"
+    "start": "ts-node --inspect ./src/server.ts"
   },
   "keywords": [],
   "author": "",

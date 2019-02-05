@@ -183,6 +183,7 @@ const users = {
     // DELETE CAMUNDA USER
     deleteCamundaUser: (req, res) => {
         const camundaUserId = req.params.userId;
+        console.log('delete user');
         request({
             url: `${camundaIp}/user/${camundaUserId}`,
             method: "DELETE"
@@ -193,6 +194,7 @@ const users = {
                 res.json({ 'message': 'camunda server error retrieving groups' });
                 return;
             }
+            console.log('delete user Data');
             res.status(200);
             res.json(JSON.parse(body));
         });
