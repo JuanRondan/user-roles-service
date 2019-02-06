@@ -14,12 +14,16 @@ router.put('/users/:userId', users.putUser);
 router.delete('/users/:userId', users.deleteUser);
 
 // -----------ROLE ROUTES-----------//
-router.get('/roles', role.getRoles);
-router.get('/roles/camunda', role.getRolesFromCamunda);
+/* router.get('/roles', role.getRoles);
 router.get('/roles/:roleId', role.getRoleWithID);
 router.post('/roles', role.postRole);
 router.put('/roles/:roleId', role.putRole);
-router.delete('/roles/:roleId', role.deleteRole);
+router.delete('/roles/:roleId', role.deleteRole); */
+// -----------Camunda Roles routes-----------------//
+router.get('/roles/camunda', role.getRolesFromCamunda);
+router.post('/roles/camunda', role.createRoleInCamunda);
+router.put('/roles/camunda/:roleId', role.updateRoleInCamunda);
+router.delete('/roles/camunda/:roleId', role.deleteRoleInCamunda);
 
 //----------CAMUNDA ROUTES-----------//
 router.get('/camunda/:userId/roles/:roleId', camunda.getRequests);
