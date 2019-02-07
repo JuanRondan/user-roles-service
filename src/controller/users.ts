@@ -157,9 +157,9 @@ const users = {
 
     // UPDATE CAMUNDA USER
     updateCamundaUser: (req, res) => {
-        const camundaUserId =  req.body.userId; 
+        const camundaUserId =  req.body.id; 
         const payload = {   
-                "id":  req.body.userId,
+                "id":  req.body.id,
                 "firstName": req.body.firstName,
                 "lastName": req.body.lastName,
                 "email": req.body.email
@@ -183,7 +183,6 @@ const users = {
     // DELETE CAMUNDA USER
     deleteCamundaUser: (req, res) => {
         const camundaUserId = req.params.userId;
-        console.log('delete user');
         request({
             url: `${camundaIp}/user/${camundaUserId}`,
             method: "DELETE"
@@ -195,8 +194,8 @@ const users = {
                 return;
             }
             console.log('delete user Data');
-            res.status(200);
-            res.json(JSON.parse(body));
+            res.status(204);
+            res.json(body);
         });
     }
 }
