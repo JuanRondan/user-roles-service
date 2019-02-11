@@ -33,8 +33,11 @@ router.post('/camunda/:taskId/reject', camunda.rejectRequest);
 
 //----------CAMUNDA USER ROUTES-----------//
 router.get('/camunda/user', users.getUserListFromCamunda);
+router.get('/users/camundaUserRole/:userId', users.camundaUserRoleList);
 router.post('/users/createCamundaUser', users.createCamundaUser);
 router.put('/users/camunda/updateCamundaUser', users.updateCamundaUser);
+router.put('/users/camunda/camundaUserRoleAssignment', users.camundaUserRoleAssignment);
+router.put('/users/camunda/camundaUserRoleRemoval', users.camundaUserRoleRemoval);
 router.delete('/users/camunda/:userId', users.deleteCamundaUser);
 
 // router.post('/camunda', camunda.initiateRequest);

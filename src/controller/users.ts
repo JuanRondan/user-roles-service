@@ -119,7 +119,7 @@ const users = {
             if (error) {
                 console.dir(error);
                 res.status(500);
-                res.json({ 'message': 'camunda server error retrieving groups' });
+                res.json({ 'message': 'camunda server error retrieving users' });
                 return;
             }
             res.status(200);
@@ -131,7 +131,7 @@ const users = {
         const payload = {
             "profile":
             {   
-                "id": new Date().valueOf(),
+                "id": req.body.guid,
                 "firstName": req.body.firstName,
                 "lastName": req.body.lastName,
                 "email": req.body.email
@@ -190,13 +190,85 @@ const users = {
             if (error) {
                 console.dir(error);
                 res.status(500);
-                res.json({ 'message': 'camunda server error retrieving groups' });
+                res.json({ 'message': 'camunda server error deleting user' });
                 return;
             }
             console.log('delete user Data');
             res.status(204);
             res.json(body);
         });
-    }
+    },
+
+    // ASSINING PARTICULAR ROLE TO A USER
+    camundaUserRoleAssignment: (req, res) => {
+        const camundaUserId =  req.body.guid; 
+        const camundaGroupId = req.body.roleId;
+        const payload = {   
+                "id":  req.body.roleId,
+                "userId": req.body.guid,
+            }
+        console.log(payload);
+        const url = `${camundaIp}/group/${camundaGroupId}/members/${camundaUserId}`;
+        console.log(url);
+        request({
+            url: url,
+            method: "PUT",
+            json: payload
+        }, (error, response, body) => {
+            if (error) {
+                console.dir(error);
+                res.status(500);
+                res.json({ 'message': 'camunda server error' });
+                return;
+            }
+            res.status(201);
+            res.json(response);
+        });
+    },  
+
+    // REMOVING PARTICULAR ROLE FROM A USER
+    camundaUserRoleRemoval: (req, res) => {
+        const camundaUserId =  req.body.guid; 
+        const camundaGroupId = req.body.roleId;
+        const payload = {   
+                "id":  req.body.roleId,
+                "userId": req.body.guid,
+            }
+        console.log(payload);
+        const url = `${camundaIp}/group/${camundaGroupId}/members/${camundaUserId}`;
+        console.log(url);
+        request({
+            url: url,
+            method: "DELETE",
+            json: payload
+        }, (error, response, body) => {
+            if (error) {
+                console.dir(error);
+                res.status(500);
+                res.json({ 'message': 'camunda server error' });
+                return;
+            }
+            res.status(201);
+            res.json(response);
+        });
+    },
+
+    // LIST OF ROLE ASSIGNED TO A USER
+    camundaUserRoleList: (req, res) => {
+        const camundaUserId = req.params.userId;
+        request({
+            url: `${camundaIp}/group?member=${camundaUserId}`,
+            method: "GET"
+        }, (error, response, body) => {
+            if (error) {
+                console.dir(error);
+                res.status(500);
+                res.json({ 'message': 'camunda server error retrieving groups' });
+                return;
+            }
+            res.status(200);
+            res.json(JSON.parse(body));
+        });
+    },
 }
 export { users };
