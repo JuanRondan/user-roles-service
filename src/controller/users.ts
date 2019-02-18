@@ -270,5 +270,23 @@ const users = {
             res.json(JSON.parse(body));
         });
     },
+    // CAMUNDA USER PROFILE DATA
+    camundaUserProfile: (req, res) => {
+        const camundaUserId = req.params.userId;
+        request({
+            url: `${camundaIp}/user/${camundaUserId}/profile`,
+            method: "GET"
+        }, (error, response, body) => {
+            if (error) {
+                console.dir(error);
+                res.status(500);
+                res.json({ 'message': 'camunda server error' });
+                return;
+            }
+            console.log('camunda user profile Data');
+            res.status(200);
+            res.json(JSON.parse(body));
+        });
+    },    
 }
 export { users };
